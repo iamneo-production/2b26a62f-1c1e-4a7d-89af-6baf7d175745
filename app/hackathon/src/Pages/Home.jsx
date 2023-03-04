@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar } from "react-modern-calendar-datepicker";
 import './Home.css'
+import json from '../Predictions.json';
+
+console.log(json)
+
 const useStyles = createStyles((theme) => ({
   root: {
     backgroundColor:
@@ -59,7 +63,23 @@ const Home = () => {
   let ack = 'Add to Profile'
   const [num, setNum] = useState([])
   const sendData = async () => {
-    setSelectedDay(...selectedDay, [{year: 2019,month: 3, day: 1,}, {year: 2019,month: 3, day: 2,}]);
+    let info = []
+    let k = 1, l = 1;
+    const final = json[value].map(item => {
+       if(item == 1) {
+         info.push({year: 2023,month: l, day: k})
+       }
+       if(k == 31 && l == 1) {
+          l++;
+          k = 0;
+       }
+       if(k == 28 && l == 2) {
+          l++;
+          k = 0;
+        }
+       k++;
+    })
+    setSelectedDay(...selectedDay, info);
     setVisible(true);
     const res = await searchData({data: value});
     setData(res.data);
@@ -94,12 +114,19 @@ const Home = () => {
             <h1>Heat Wave Predictor</h1>
         </Text>
         <div>
+          
+        <h2> 
+          Select any district and click on proceed to see the predictions for the January, February
+        </h2>
+        <div style={{display: 'flex', padding: '1rem 2rem'}}>
+        <div style={{width: '50%'}}>
+
         <Calendar
           value={selectedDay}
           onChange={setSelectedDay}
           color="#fff"
           colorPrimary="#FF0000"
-         
+          
           renderFooter={() => (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem 2rem' }}>
               <button
@@ -116,12 +143,30 @@ const Home = () => {
                   fontSize: '1rem',
                   cursor: 'pointer',
                 }}
-              >
+                >
                 Reset Value!
               </button>
             </div>
           )}
-        />
+          />
+          </div>
+          <div style={{width: '40%'}}>
+             <h3>
+              The days predicted heatwaves are marked in red
+              </h3>
+              <h3>
+              We are confident in our predictions for the first 25 days after that the support is less than ideal to have more confidence in.
+              </h3>
+              <h3>
+              The model predicts the heatwaves from January and February of 2023. With more recent data, we can predict future heatwaves.
+              </h3>
+              <h4>
+              The Heatwave classification has been done with <a href = "https://www.who.int/india/heat-wave">this website</a> as a reference and keeping in mind that Telangana's average maximum heatwave temperature is 44 degrees.
+              </h4>
+          </div>
+          </div>
+          </div>
+         
           <br />
           <Divider size="xs" />
           <br />
@@ -131,11 +176,11 @@ const Home = () => {
             value={value} 
             onChange={setValue}
             data={[
-              { value: 'Adilabad', label: 'Adilabad' },
-              { value: 'Nizambad', label: 'Nizambad' },
-              { value: 'Warangal', label: 'Warangal' },
-              { value: 'Karimnagar', label: 'Karimnagar' },
-              { value: 'Khammam', label: 'Khammam' },
+              { value: 'adilabad', label: 'Adilabad' },
+              { value: 'nizambad', label: 'Nizambad' },
+              { value: 'warangal', label: 'Warangal' },
+              { value: 'karimnagar', label: 'Karimnagar' },
+              { value: 'khammam', label: 'Khammam' },
             ]}
           />
           <br />
@@ -144,7 +189,7 @@ const Home = () => {
           <br />
        
         </div>
-      </div>
+   
     </>
   );
 };
