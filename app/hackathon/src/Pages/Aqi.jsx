@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar } from "react-modern-calendar-datepicker";
 import './Home.css'
+import json from '../Predictions.json';
+
+console.log(json)
+
 const useStyles = createStyles((theme) => ({
   root: {
     backgroundColor:
@@ -46,7 +50,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Aqi = () => {
+const Home = () => {
   const navigate = useNavigate()
   if(localStorage.getItem('email') == null) {
       navigate('/')
@@ -59,7 +63,23 @@ const Aqi = () => {
   let ack = 'Add to Profile'
   const [num, setNum] = useState([])
   const sendData = async () => {
-    setSelectedDay(...selectedDay, [{year: 2019,month: 3, day: 1,}, {year: 2019,month: 3, day: 2,}]);
+    let info = []
+    let k = 1, l = 1;
+    const final = json[value].map(item => {
+       if(item == 1) {
+         info.push({year: 2023,month: l, day: k})
+       }
+       if(k == 31 && l == 1) {
+          l++;
+          k = 0;
+       }
+       if(k == 28 && l == 2) {
+          l++;
+          k = 0;
+        }
+       k++;
+    })
+    setSelectedDay(...selectedDay, info);
     setVisible(true);
     const res = await searchData({data: value});
     setData(res.data);
@@ -94,59 +114,51 @@ const Aqi = () => {
             <h1>Air Quality Index Predictor</h1>
         </Text>
         <div>
-        <Calendar
-          value={selectedDay}
-          onChange={setSelectedDay}
-          color="#fff"
-          colorPrimary="#FF0000"
-         
-          renderFooter={() => (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem 2rem' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedDay([])
-                }}
-                style={{
-                  border: '#0fbcf9',
-                  color: '#fff',
-                  backgroundColor: '#0275d8',
-                  borderRadius: '0.2rem',
-                  padding: '1rem 2rem',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                }}
-              >
-                Reset Value!
-              </button>
-            </div>
-          )}
-        />
-          <br />
+          
+      
+        <div style={{display: 'flex', padding: '1rem 2rem'}}>
+        <div style={{width: '50%'}}>
+          <h1>
+            March
+          </h1>
+           <h3>
+           158, 155, 151, 151, 149, 153, 151, 148, 149, 151, 152, 155, 155,
+        156, 154, 152, 153, 157, 156, 156, 156, 158, 159, 158, 158, 156,
+156, 155
+           </h3>
+           <Divider size="xs" />
+           <h3>
+              Monthly Average : 154.21
+            </h3>
+          </div>
+          <div style={{width: '50%'}}>
+            
+          <h1>
+            April
+          </h1>
+          <h3>
+          154, 154, 155, 155, 147, 138, 138, 136, 150, 151, 151, 149, 142,
+        141, 140, 140, 141, 142, 141, 145, 147, 145, 145, 132, 130, 137,
+        136, 140, 142, 144, 133
+          </h3>
           <Divider size="xs" />
+          <h3>
+              Monthly Average : 143.25
+            </h3>
+          </div>
+          </div>
+          </div>
+       
+          
           <br />
-          <Select
-            size="lg"
-            placeholder="Select a district to predict for"
-            value={value} 
-            onChange={setValue}
-            data={[
-              { value: 'Adilabad', label: 'Adilabad' },
-              { value: 'Nizambad', label: 'Nizambad' },
-              { value: 'Warangal', label: 'Warangal' },
-              { value: 'Karimnagar', label: 'Karimnagar' },
-              { value: 'Khammam', label: 'Khammam' },
-            ]}
-          />
-          <br />
-          <Button onClick={sendData} size="md">Proceed</Button>
+          
           <br />
           <br />
        
         </div>
-      </div>
+   
     </>
   );
 };
 
-export default Aqi;
+export default Home;
